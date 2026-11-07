@@ -280,7 +280,7 @@ em, h1 strong, h2 strong, .enunciado strong { font-style: italic; font-weight: 7
   background: var(--papel); border: 1px solid var(--tinta-suave); border-radius: 0; padding: 12px 14px; min-height: 48px;
 }
 .campo textarea { min-height: 120px; resize: vertical; }
-.campo [aria-invalid="true"] { border-color: #8c2f12; border-width: 2px; }
+.campo [aria-invalid="true"] { border-color: #8c2f12; box-shadow: inset 0 0 0 1px #8c2f12; }
 /* A linha do erro tem sempre lugar reservado: se aparecesse ou sumisse, o formulário saltava a meio de um clique e o clique falhava. */
 .erro { display: block; min-height: 1.4em; color: #8c2f12; font-size: 0.875rem; font-weight: 600; line-height: 1.4; }
 .formulario > .campo:not(:has(.erro)), .formulario > fieldset { margin-bottom: 14px; }
