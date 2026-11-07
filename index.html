@@ -271,7 +271,7 @@ em, h1 strong, h2 strong, .enunciado strong { font-style: italic; font-weight: 7
 .diretos div { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; font-size: 0.9375rem; }
 .diretos dt { font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: .78; min-width: 76px; }
 
-.formulario { display: grid; gap: 20px; max-width: 720px; }
+.formulario { display: grid; gap: 6px; max-width: 720px; }
 .campo { display: grid; gap: 6px; }
 .campo label, fieldset legend { font-size: 0.875rem; font-weight: 600; }
 .campo small { font-weight: 400; color: var(--tinta-suave); }
@@ -281,7 +281,9 @@ em, h1 strong, h2 strong, .enunciado strong { font-style: italic; font-weight: 7
 }
 .campo textarea { min-height: 120px; resize: vertical; }
 .campo [aria-invalid="true"] { border-color: #8c2f12; border-width: 2px; }
-.erro { color: #8c2f12; font-size: 0.875rem; font-weight: 600; }
+/* A linha do erro tem sempre lugar reservado: se aparecesse ou sumisse, o formulário saltava a meio de um clique e o clique falhava. */
+.erro { display: block; min-height: 1.4em; color: #8c2f12; font-size: 0.875rem; font-weight: 600; line-height: 1.4; }
+.formulario > .campo:not(:has(.erro)), .formulario > fieldset { margin-bottom: 14px; }
 fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; }
 .opcoes { display: flex; flex-wrap: wrap; gap: 8px 24px; }
 .opcoes label, .consentimento { display: flex; gap: 10px; align-items: flex-start; font-size: 0.9375rem; font-weight: 400; min-height: 28px; }
@@ -585,12 +587,12 @@ fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; }
         <div class="campo">
           <label for="nome">Nome</label>
           <input id="nome" name="nome" type="text" autocomplete="name" required>
-          <span class="erro" id="nome-erro" hidden></span>
+          <span class="erro" id="nome-erro"></span>
         </div>
         <div class="campo">
           <label for="email">Email</label>
           <input id="email" name="email" type="email" autocomplete="email" required>
-          <span class="erro" id="email-erro" hidden></span>
+          <span class="erro" id="email-erro"></span>
         </div>
         <div class="campo">
           <label for="telefone">Telefone <small>(opcional, se preferir que lhe ligue)</small></label>
@@ -611,7 +613,7 @@ fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; }
           <input id="consentimento" type="checkbox" name="consentimento" required>
           <span>Autorizo o uso destes dados só para responder a este pedido. <a href="privacidade.html">Ler a política de privacidade</a>.</span>
         </label>
-        <span class="erro" id="consentimento-erro" hidden></span>
+        <span class="erro" id="consentimento-erro"></span>
         <div><button class="botao" type="submit">Enviar pedido</button></div>
         <p class="resposta" id="resposta" role="status" hidden></p>
       </form>
@@ -641,21 +643,20 @@ fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; }
   var form = document.getElementById('pedido');
   var resposta = document.getElementById('resposta');
   var regras = {
-    nome: function (v) { return v.trim() ? '' : 'Escreva o seu nome, para eu saber como o tratar.'; },
+    nome: function (v) { return v.trim() ? '' : 'Escreva o seu nome.'; },
     email: function (v) {
-      if (!v.trim()) return 'Escreva o seu email, para eu lhe poder responder.';
+      if (!v.trim()) return 'Escreva o seu email.';
       if (v.indexOf('@') < 0) return 'O email precisa de um @.';
-      return /^\S+@\S+\.\S+$/.test(v) ? '' : 'Confirme o email: falta a parte depois do ponto, como .pt ou .com.';
+      return /^\S+@\S+\.\S+$/.test(v) ? '' : 'Falta o final do email, como .pt.';
     }
   };
   function validar(id) {
     var campo = document.getElementById(id);
     var erro = document.getElementById(id + '-erro');
     var msg = id === 'consentimento'
-      ? (campo.checked ? '' : 'Para lhe responder preciso desta autorização.')
+      ? (campo.checked ? '' : 'Assinale para eu poder responder.')
       : regras[id](campo.value);
     erro.textContent = msg;
-    erro.hidden = !msg;
     if (msg) { campo.setAttribute('aria-invalid', 'true'); campo.setAttribute('aria-describedby', id + '-erro'); }
     else { campo.removeAttribute('aria-invalid'); campo.removeAttribute('aria-describedby'); }
     return !msg;
